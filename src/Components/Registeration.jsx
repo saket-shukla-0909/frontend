@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUser, registerUser } from "../redux/authThunks";
 import { FaUser, FaEnvelope, FaLock, FaPhoneAlt , FaRegCalendarAlt, FaUserCircle } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { FaUser, FaEnvelope, FaLock, FaPhoneAlt , FaRegCalendarAlt, FaUserCircle
 const Registration = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const isLogin = location.pathname === "/Login";
 
@@ -30,22 +31,28 @@ const handleChange = (e) => {
 
 
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log(formData, "formData");
+ const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData, "formData");
 
-  if (!isLogin) {
-    dispatch(registerUser(formData));
-  } else {
-    const loginData = {
-      phone_number: formData.phone_number,
-      password: formData.password,
-    };
-    console.log(loginData, "this is login data");
-    dispatch(loginUser(loginData)); 
-  }
-};
+    if (!isLogin) {
+      const resultAction = await dispatch(registerUser(formData));
+      if (registerUser.fulfilled.match(resultAction)) {
+        navigate("/Login"); // ✅ Go to login page only after successful registration
+      }
+    } else {
+      const loginData = {
+        phone_number: formData.phone_number,
+        password: formData.password,
+      };
+      console.log(loginData, "this is login data");
 
+      const resultAction = await dispatch(loginUser(loginData));
+      if (loginUser.fulfilled.match(resultAction)) {
+        navigate("/Home"); // ✅ Go to home after successful login
+      }
+    }
+  };
 
 
   return (
