@@ -1,18 +1,15 @@
-// tailwind.config.js
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}"
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/daisyui/dist/**/*.js", // ✅ include DaisyUI components
   ],
   safelist: [
-    "chat",
-    "chat-start",
-    "chat-end",
-    "chat-bubble",
-    "chat-bubble-info",
-    "bg-primary",
-    "bg-base-200",
-    "text-white",
-    "text-base-content"
+    {
+      pattern: /chat(-start|-end|-bubble|-bubble-info)?/, // ✅ safer match
+    },
+    {
+      pattern: /(bg|text)-(primary|base-200|white|base-content)/,
+    },
   ],
   theme: {
     extend: {},
