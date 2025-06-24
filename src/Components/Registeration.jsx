@@ -22,14 +22,6 @@ const Registration = () => {
   });
 
 
-  useEffect(() => {
-    if (!isLogin) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    }
-  }, [isLogin]);
-
-
 const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData((prev) => ({
@@ -58,6 +50,8 @@ const handleChange = (e) => {
     } else {
        const resultAction = await dispatch(registerUser(formData));
       if (registerUser.fulfilled.match(resultAction)) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
         // navigate("/Login"); // ✅ Go to login page only after successful registration
       }
       
