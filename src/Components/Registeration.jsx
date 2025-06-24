@@ -35,10 +35,11 @@ const handleChange = (e) => {
     e.preventDefault();
     console.log(formData, "formData");
 
-    if (!isLogin) {
+    if(!isLogin) {
       const resultAction = await dispatch(registerUser(formData));
+      console.log(resultAction, "resultAction from register");
       if (registerUser.fulfilled.match(resultAction)) {
-        navigate("/Login"); 
+          console(registerUser.fulfilled.match(resultAction))
       }
     } else {
       const loginData = {
