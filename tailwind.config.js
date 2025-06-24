@@ -1,15 +1,17 @@
-// tailwind.config.js
-module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}"
-  ],
-  safelist: [
-  "chat", "chat-start", "chat-end", "chat-bubble", "chat-bubble-info",
-  "bg-white", "bg-gray-900", "text-white"
-  ],
+// /** @type {import('tailwindcss').Config} */
+// module.exports = {
+//   content: [],
+//   theme: {
+//     extend: {},
+//   },
+//   plugins: [],
+// }
 
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"], // ✅ Tell Tailwind where to scan for classes
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
-};
+  plugins: [require("daisyui")], // ✅ Enable DaisyUI
+}
