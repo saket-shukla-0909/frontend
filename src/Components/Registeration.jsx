@@ -21,6 +21,15 @@ const Registration = () => {
     dob: "",
   });
 
+
+  useEffect(() => {
+    if (!isLogin) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+  }, [isLogin]);
+
+
 const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData((prev) => ({

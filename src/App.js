@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import SignUp from './Pages/SignUp';
 import Login from './Pages/Login';
@@ -9,11 +9,12 @@ import { isTokenValid } from './Utils/auth';
 // import Loading from './Components/Loading';
 
 function App() {
-  const { isLoggedIn } = useSelector((state) => state.auth);
-  const tokenValid = isTokenValid();
+    const location = useLocation(); 
+    const { isLoggedIn } = useSelector((state) => state.auth);
+    const tokenValid = isTokenValid();
+    const isAuthenticated = location.pathname !== "/SignUp" && (isLoggedIn || tokenValid);
 
-  const isAuthenticated = isLoggedIn || tokenValid;
-
+    
   return (
     // <Loading/>
     <BrowserRouter>
