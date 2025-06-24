@@ -9,7 +9,7 @@ import { isTokenValid } from './Utils/auth';
 // import Loading from './Components/Loading';
 
 function App() {
-  const localtion = useLocation
+  // const localtion = useLocation
   const { isLoggedIn } = useSelector((state) => state.auth);
   const tokenValid = isTokenValid();
 
