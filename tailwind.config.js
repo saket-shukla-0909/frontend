@@ -1,18 +1,8 @@
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   content: [],
-//   theme: {
-//     extend: {},
-//   },
-//   plugins: [],
-// }
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],  // ✅ important for React
+  content: ["./src/**/*.{js,jsx,ts,tsx}"], // ✅ VERY IMPORTANT
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")], // optional, only if you use DaisyUI
+  plugins: [require("daisyui")], // ✅ If you're using daisyUI, else remove
 };
-

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* Hide scrollbar but allow scrolling */
 .custom-scroll {
   scrollbar-width: none;       /* Firefox */
