@@ -34,8 +34,9 @@ const handleChange = (e) => {
  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData, "formData");
-    if(isLogin) {
-       const loginData = {
+
+    if (isLogin) {
+      const loginData = {
         phone_number: formData.phone_number,
         password: formData.password,
       };
@@ -46,11 +47,12 @@ const handleChange = (e) => {
         navigate("/Home"); // ✅ Go to home after successful login
       }
     } else {
-     const resultAction = await dispatch(registerUser(formData));
-      console.log(resultAction, "resultAction from register");
+       const resultAction = await dispatch(registerUser(formData));
       if (registerUser.fulfilled.match(resultAction)) {
-          console(registerUser.fulfilled.match(resultAction))
+        // navigate("/Login"); // ✅ Go to login page only after successful registration
       }
+      
+    }
   };
 
 
