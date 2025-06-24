@@ -24,7 +24,8 @@ const Registration = () => {
 
   useEffect(() => {
     if (!isLogin) {
-      
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
   }, [isLogin]);
 
