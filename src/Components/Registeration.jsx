@@ -10,7 +10,7 @@ const Registration = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const isLogin = location.pathname === "/Login" || registered;
+  const isLogin = location.pathname === "/Login";
   const [registered, setRegistered] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -38,18 +38,9 @@ const handleChange = (e) => {
     if (!isLogin) {
       const resultAction = await dispatch(registerUser(formData));
       if (registerUser.fulfilled.match(resultAction)) {
-        setRegistered(true); // ✅ Show login form now
-        setFormData({
-          username: "",
-          email: "",
-          password: "",
-          full_name: "",
-          phone_number: "",
-          dob: "",
-        });
-        return;
+        navigate("/Login"); // ✅ Go to login page only after successful registration
       }
-    }else {
+    } else {
       const loginData = {
         phone_number: formData.phone_number,
         password: formData.password,
