@@ -124,7 +124,7 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
-export const searchUsers = createAsyncThunk(
+export const searchUser = createAsyncThunk(
   "auth/searchUser",
   async (query, { rejectWithValue }) => {
     try {

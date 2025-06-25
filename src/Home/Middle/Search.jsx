@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useDispatch } from "react-redux";
-import { searchUsers } from "../../redux/authThunks";
+import { searchUser } from "../../redux/authThunks";
+
 
 
 
@@ -12,7 +13,7 @@ const Search = () => {
     useEffect(() => {
     const delay = setTimeout(() => {
       if (query.trim()) {
-        dispatch(searchUsers(query));
+        dispatch(searchUser(query));
       }
     }, 300); // debounce input by 300ms
 
