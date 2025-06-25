@@ -30,7 +30,7 @@ const Search = () => {
             placeholder="Search by name or phone..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="input input-bordered w-full"
+            className="input input-bordered w-full text-black"
           />
           <button type="submit" className="btn btn-black">
             <IoSearch className="text-xl" />
