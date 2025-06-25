@@ -1,12 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, registerUser, logoutUser, getAllUsers } from "./authThunks";
+import { loginUser, registerUser, logoutUser, getAllUsers, searchUser } from "./authThunks";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
   isLoggedIn: !!localStorage.getItem("user"),
   isLoading: false,
   error: null,
+  users: [],             
+  searchResults: [],     
 };
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -17,6 +20,9 @@ const authSlice = createSlice({
       localStorage.removeItem("user");
       state.user = null;
       state.isLoggedIn = false;
+    },
+    clearSearchResults: (state) => {
+        state.searchResults = [];
     },
   },
   extraReducers: (builder) => {
@@ -80,9 +86,22 @@ const authSlice = createSlice({
       .addCase(getAllUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(searchUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(searchUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
+
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, clearSearchResults } = authSlice.actions;
 export default authSlice.reducer;

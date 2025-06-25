@@ -6,11 +6,14 @@ import Users from './Users';
 
 const Middle = () => {
   const dispatch = useDispatch();
-  const { users, isLoading } = useSelector((state) => state.auth);
-    console.log(users, "this is users in middle");
+  const { users, searchResults, isLoading } = useSelector((state) => state.auth);
+
   useEffect(() => {
     dispatch(getAllUsers());
   }, [dispatch]);
+
+  // Show search results if present, otherwise full list
+  const displayedUsers = searchResults.length > 0 ? searchResults : users;
 
   return (
     <div className="w-full md:w-[25%] bg-gray-900 text-white h-screen flex flex-col">
@@ -20,11 +23,12 @@ const Middle = () => {
 
       <Search />
       <hr />
+
       <div className="custom-scroll" style={{ maxHeight: 'calc(80vh)', overflowY: 'auto' }}>
         {isLoading ? (
           <p className="text-center py-4">Loading...</p>
         ) : (
-          <Users users={users || []} />
+          <Users users={displayedUsers || []} />
         )}
       </div>
     </div>

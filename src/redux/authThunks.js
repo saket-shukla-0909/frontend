@@ -25,8 +25,6 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-
-
 // export const loginUser = createAsyncThunk(
 //   "auth/loginUser",
 //   async (loginData, { rejectWithValue }) => {
@@ -107,7 +105,6 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
-
 // Thunk to fetch all users
 export const getAllUsers = createAsyncThunk(
   "users/getAllUsers",
@@ -122,6 +119,23 @@ export const getAllUsers = createAsyncThunk(
     } catch (error) {
       const message = error.response?.data?.message || error.message;
       showError(message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const searchUsers = createAsyncThunk(
+  "auth/searchUser",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/auth/search?search=${query}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response.data.data; // array of matched users
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
       return rejectWithValue(message);
     }
   }
