@@ -23,7 +23,7 @@ const Message = ({ message, isOwnMessage }) => {
       <div
         className={`chat-bubble max-w-xs md:max-w-md break-words ${
           isOwnMessage
-            ? "bg-primary text-white"
+            ? "bg-gray-800 text-white"
             : "bg-base-200 text-base-content"
         }`}
       >
