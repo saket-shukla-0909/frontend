@@ -32,9 +32,9 @@ const Search = () => {
             onChange={(e) => setQuery(e.target.value)}
             className="input input-bordered w-full text-black"
           />
-          <button type="submit" className="btn btn-black">
+          {/* <button type="submit" className="btn btn-black">
             <IoSearch className="text-xl" />
-          </button>
+          </button> */}
         </div>
       </form>
     </div>
