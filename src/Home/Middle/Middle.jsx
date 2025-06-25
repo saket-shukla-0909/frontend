@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsers } from '../../redux/authThunks';
+import { getAllMessages } from '../../redux/messageSlice'; // ✅ important
 import Search from './Search';
 import Users from './Users';
 
 const Middle = () => {
   const dispatch = useDispatch();
   const { users, searchResults, isLoading } = useSelector((state) => state.auth);
+  const { allMessages } = useSelector((state) => state.messages); // ✅ use allMessages from Redux
 
   useEffect(() => {
     dispatch(getAllUsers());
+    dispatch(getAllMessages()); // ✅ fetch all messages for latest message display
   }, [dispatch]);
 
-  // Show search results if present, otherwise full list
   const displayedUsers = searchResults.length > 0 ? searchResults : users;
 
   return (
@@ -28,7 +30,7 @@ const Middle = () => {
         {isLoading ? (
           <p className="text-center py-4">Loading...</p>
         ) : (
-          <Users users={displayedUsers || []} />
+          <Users users={displayedUsers || []} allMessages={allMessages || []} />
         )}
       </div>
     </div>

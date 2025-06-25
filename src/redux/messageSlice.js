@@ -59,10 +59,30 @@ export const fetchMessages = createAsyncThunk(
   }
 );
 
+// ✅ Thunk: Fetch all messages (for showing latest message in users list)
+export const getAllMessages = createAsyncThunk(
+  'messages/getAllMessages',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axiosInstance.get('/messages/getAllMessages', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const messagesSlice = createSlice({
   name: 'messages',
   initialState: {
-    messages: [], // [{ _id, fromSelf, message, createdAt, status }]
+    messages: [],        // Chat with selected user
+    allMessages: [],     // All messages (used to show latest per user)
     loading: false,
     error: null,
   },
@@ -71,23 +91,36 @@ const messagesSlice = createSlice({
       state.messages = [];
     },
     receiveMessage: (state, action) => {
-      const msg = { ...action.payload, status: 'delivered' };
-      state.messages.push(msg);
+      state.messages.push({ ...action.payload, status: 'delivered' });
+      state.allMessages.push({ ...action.payload, status: 'delivered' }); // update all
     },
     updateMessageStatus: (state, action) => {
       const { messageId, status } = action.payload;
-      const msg = state.messages.find((m) => m._id === messageId);
-      if (msg) {
-        msg.status = status;
-      }
+      const updateStatus = (msg) => {
+        if (msg._id === messageId) msg.status = status;
+      };
+      state.messages.forEach(updateStatus);
+      state.allMessages.forEach(updateStatus);
     },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Messages
+      // 🔄 Fetch All Messages
+      .addCase(getAllMessages.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allMessages = action.payload;
+      })
+      .addCase(getAllMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // 🔄 Fetch Chat Messages (one-to-one)
       .addCase(fetchMessages.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.loading = false;
@@ -98,15 +131,15 @@ const messagesSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Send Message
+      // ✉️ Send message
       .addCase(sendMessage.fulfilled, (state, action) => {
-        state.messages.push(action.payload); // Already includes 'status'
-      })
-      .addCase(sendMessage.rejected, (state, action) => {
-        state.error = action.payload;
+        const msg = action.payload;
+        state.messages.push(msg);
+        state.allMessages.push(msg);
       });
   },
 });
+
 
 export const {
   clearMessages,
