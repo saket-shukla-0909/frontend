@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { searchUsers } from "../../redux/authThunks";
 
 
+
 const Search = () => {
     const [query, setQuery] = useState("");
     const dispatch = useDispatch();
