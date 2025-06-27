@@ -59,9 +59,9 @@ const handleChange = (e) => {
        const resultAction = await dispatch(registerUser(formData));
       if (registerUser.fulfilled.match(resultAction)) {
           if (registerUser.fulfilled.match(resultAction)) {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              dispatch({ type: "auth/logout" });
+              // localStorage.removeItem("token");
+              // localStorage.removeItem("user");
+              // dispatch({ type: "auth/logout" });
               setTimeout(() => {
                 navigate("/Login"); // Redirect AFTER toast is visible
               }, 1500);// ✅ Enable this redirect after successful registration
