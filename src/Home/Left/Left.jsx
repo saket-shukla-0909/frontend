@@ -70,38 +70,50 @@ const Left = () => {
       </div>
 
       {/* Modal for Upload */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-[250px] h-[250px] rounded-xl shadow-lg flex flex-col items-center justify-center gap-4 p-4 relative">
-            <button
-              className="absolute top-2 right-3 text-gray-600 text-xl"
-              onClick={() => setShowModal(false)}
-            >
-              ✕
-            </button>
-            <FaUserCircle className="text-[80px] text-gray-500" />
-            <label className="text-blue-600 cursor-pointer">
-              Upload your image
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
-            <label className="text-blue-600 cursor-pointer">
-              Take a photo
-              <input
-                type="file"
-                accept="image/*"
-                capture="user"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white w-[250px] h-[250px] rounded-xl shadow-lg flex flex-col items-center justify-center gap-4 p-4 relative">
+              <button
+                className="absolute top-2 right-3 text-gray-600 text-xl"
+                onClick={() => setShowModal(false)}
+              >
+                ✕
+              </button>
+        
+              {/* ✅ Show uploaded image or default icon */}
+              {user?.profile_picture ? (
+                <img
+                  src={`${process.env.REACT_APP_BASE_URL}${user.profile_picture.replace(/^.*\/uploads/, "/uploads").replace(/\\/g, "/")}`}
+                  alt="Profile"
+                  className="w-20 h-20 rounded-full object-cover border border-gray-300"
+                />
+              ) : (
+                <FaUserCircle className="text-[80px] text-gray-500" />
+              )}
+        
+              <label className="text-blue-600 cursor-pointer">
+                Upload your image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+              <label className="text-blue-600 cursor-pointer">
+                Take a photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="user"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
     </>
   );
 };
