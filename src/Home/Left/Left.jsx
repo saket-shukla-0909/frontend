@@ -10,7 +10,7 @@ const Left = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [showModal, setShowModal] = useState(false);
-  console.log(user.profile_picture, "this is user profile_picture")
+  console.log(user.profile_picture.replace(/^.*\/uploads/, "/uploads").replace(/\\/g, "/"),"**********")
 
   const handleLogout = () => {
     dispatch(logoutUser())
@@ -49,11 +49,12 @@ const Left = () => {
             {user?.profile_picture ? (
               <>
                 <img
-                  src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture.replace(/\\/g, "/")}`}
+                  src={`${process.env.REACT_APP_BASE_URL}${user.profile_picture.replace(/^.*\/uploads/, "/uploads").replace(/\\/g, "/")}`}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover border border-gray-300 cursor-pointer"
                   onClick={() => setShowModal(true)}
                 />
+
                 <FaEdit
                   className="absolute bottom-0 right-0 bg-white rounded-full text-gray-600 text-xs p-[2px] border border-gray-300 cursor-pointer group-hover:opacity-100 opacity-0 transition-opacity"
                   onClick={() => setShowModal(true)}

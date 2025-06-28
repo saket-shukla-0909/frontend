@@ -53,7 +53,9 @@ const handleChange = (e) => {
 
       const resultAction = await dispatch(loginUser(loginData));
       if (loginUser.fulfilled.match(resultAction)) {
-        navigate("/Home"); // ✅ Go to home after successful login
+        setTimeout(() => {
+                navigate("/Home"); // Redirect AFTER toast is visible
+              }, 1500);// ✅ Go to home after successful login
       }
     } else {
        const resultAction = await dispatch(registerUser(formData));
