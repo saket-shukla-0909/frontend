@@ -10,7 +10,7 @@ const Left = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [showModal, setShowModal] = useState(false);
-  console.log(user.profile_picture.replace(/^.*\/uploads/, "/uploads").replace(/\\/g, "/"),"**********")
+ 
 
   const handleLogout = () => {
     dispatch(logoutUser())
@@ -90,7 +90,7 @@ const Left = () => {
               ) : (
                 <FaUserCircle className="text-[80px] text-gray-500" />
               )}
-        
+
               <label className="text-blue-600 cursor-pointer">
                 Upload your image
                 <input
