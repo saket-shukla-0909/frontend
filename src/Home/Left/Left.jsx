@@ -10,6 +10,7 @@ const Left = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [showModal, setShowModal] = useState(false);
+  console.log(user.profile_picture, "this is user profile_picture")
 
   const handleLogout = () => {
     dispatch(logoutUser())
