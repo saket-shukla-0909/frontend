@@ -140,3 +140,30 @@ export const searchUser = createAsyncThunk(
     }
   }
 );
+
+export const uploadProfilePicture = createAsyncThunk(
+  "auth/uploadProfilePicture",
+  async (file, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append("profile_picture", file);
+
+      const token = localStorage.getItem("token");
+
+      const response = await axiosInstance.post("/auth/upload-profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      showSuccess(response.data.message || "Profile picture uploaded");
+
+      return response.data.user; // updated user
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      showError(message);
+      return rejectWithValue(message);
+    }
+  }
+);

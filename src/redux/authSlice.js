@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, registerUser, logoutUser, getAllUsers, searchUser } from "./authThunks";
+import { loginUser, registerUser, logoutUser, getAllUsers, searchUser, uploadProfilePicture  } from "./authThunks";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -98,8 +98,22 @@ const authSlice = createSlice({
       .addCase(searchUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-      });
+      })
 
+    .addCase(uploadProfilePicture.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(uploadProfilePicture.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload)); // update localStorage
+    })
+    .addCase(uploadProfilePicture.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+  
   },
 });
 
