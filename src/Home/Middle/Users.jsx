@@ -39,11 +39,7 @@ const Users = ({ users, allMessages }) => {
               <div className={`avatar ${user.status === 1 ? 'avatar-online text-green' : 'avatar-offline'}`}>
                 <div className="w-12 rounded-full">
                   <img
-                    src={
-                      user.profile_picture
-                        ? `${process.env.REACT_APP_BASE_URL}/${user.profile_picture.replace(/\\/g, "/")}`
-                        : 'https://img.daisyui.com/images/profile/demo/gordon@192.webp'
-                    }
+                    src={`${process.env.REACT_APP_BASE_URL}${user.profile_picture.replace(/^.*\/uploads/, "/uploads").replace(/\\/g, "/")}`}
                     alt="User Avatar"
                   />
                 </div>
