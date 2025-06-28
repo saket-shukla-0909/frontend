@@ -33,9 +33,10 @@ const ChatUser = () => {
   if (!selectedConversation) return null;
 
   const isOnline = selectedConversation.status === 1;
-  const profileImage = selectedConversation.profile_picture
-    ? `${process.env.REACT_APP_BASE_URL}/${selectedConversation.profile_picture.replace(/\\/g, "/")}`
-    : "https://img.daisyui.com/images/profile/demo/gordon@192.webp";
+  const profileImage = selectedConversation?.profile_picture?.includes("uploads")
+   ? `${process.env.REACT_APP_BASE_URL}/${selectedConversation.profile_picture.replace(/\\/g, "/").replace(/^.*uploads\//, "uploads/")}`
+   : "https://img.daisyui.com/images/profile/demo/gordon@192.webp";
+
 
   return (
     <div className="flex items-center h-[10vh] gap-4 px-4 py-3 bg-white shadow-md rounded-md">
