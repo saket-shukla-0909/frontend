@@ -6,11 +6,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './Home/home';
 import { isTokenValid } from './Utils/auth';
+import { useEffect } from 'react';
+import socket from './socket/socket';
 // import Loading from './Components/Loading';
 
 function App() {
   // const localtion = useLocation
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
   const tokenValid = isTokenValid();
 
   const isAuthenticated = isLoggedIn || tokenValid;
@@ -20,7 +22,7 @@ function App() {
       socket.emit("add-user", user._id);
     }
   }, [user]);
-  
+
   return (
     // <Loading/>
     <BrowserRouter>
