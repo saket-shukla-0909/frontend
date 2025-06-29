@@ -12,12 +12,22 @@ const useCallManager = () => {
   const [callEnded, setCallEnded] = useState(false);
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState(null);
+  const [callee, setCallee] = useState(null); // for tracking who we called
   const [callerSignal, setCallerSignal] = useState(null);
 
-  // 📞 Call someone
+  const ringtone = useRef(null);
+
+  useEffect(() => {
+    ringtone.current = new Audio("/sounds/ringtone.mp3");
+    ringtone.current.loop = true;
+  }, []);
+
+  // 📞 Initiating a call
   const callUser = (userId) => {
     console.log("📞 Calling user:", userId);
     const peer = new Peer({ initiator: true, trickle: false, stream });
+
+    setCallee(userId); // Save callee for later in case we end the call
 
     peer.on("signal", (signalData) => {
       console.log("📡 Emitting call-user signal...");
@@ -29,17 +39,20 @@ const useCallManager = () => {
     });
 
     peer.on("stream", (remoteStream) => {
-      console.log("🎥 Stream received from remote peer");
-      userVideo.current.srcObject = remoteStream;
+      console.log("🎥 Received remote stream");
+      if (userVideo.current) {
+        userVideo.current.srcObject = remoteStream;
+      }
     });
 
     connectionRef.current = peer;
   };
 
-  // ✅ Answer an incoming call
+  // ✅ Answering an incoming call
   const answerCall = () => {
     console.log("✅ Answering call from:", caller);
     setCallAccepted(true);
+    ringtone.current?.pause();
 
     const peer = new Peer({ initiator: false, trickle: false, stream });
 
@@ -53,45 +66,65 @@ const useCallManager = () => {
 
     peer.on("stream", (remoteStream) => {
       console.log("🎥 Receiving stream after answering");
-      userVideo.current.srcObject = remoteStream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = remoteStream;
+      }
     });
 
     peer.signal(callerSignal);
     connectionRef.current = peer;
   };
 
-  // ❌ Leave/end the call
+  // ❌ Leave or end the call
   const leaveCall = () => {
     console.log("❌ Call ended");
     setCallEnded(true);
     connectionRef.current?.destroy();
-    socket.emit("end-call", { to: caller });
+
+    const otherUser = caller || callee;
+    if (otherUser) {
+      socket.emit("end-call", { to: otherUser });
+    }
+
+    resetCallState();
   };
 
+  // 🔄 Reset all call-related state
+  const resetCallState = () => {
+    setReceivingCall(false);
+    setCaller(null);
+    setCallerSignal(null);
+    setCallAccepted(false);
+    setCallEnded(false);
+    setCallee(null);
+    if (userVideo.current) userVideo.current.srcObject = null;
+  };
+
+  // 📥 Listen for call events
   useEffect(() => {
-    // 📲 Incoming call
     socket.on("receive-call", ({ from, signal }) => {
       console.log("📲 Incoming call from:", from);
       setReceivingCall(true);
       setCaller(from);
       setCallerSignal(signal);
+      ringtone.current?.play().catch(() => {});
     });
 
-    // ✅ Call was answered
     socket.on("call-answered", ({ signal }) => {
       console.log("✅ Call was answered. Connecting peer...");
       setCallAccepted(true);
       connectionRef.current?.signal(signal);
     });
 
-    // ❌ Call was ended
     socket.on("call-ended", () => {
       console.log("❌ Call ended by the other user");
       setCallEnded(true);
       connectionRef.current?.destroy();
+      ringtone.current?.pause();
+      ringtone.current.currentTime = 0;
+      resetCallState();
     });
 
-    // 🔁 Cleanup listeners on unmount
     return () => {
       socket.off("receive-call");
       socket.off("call-answered");

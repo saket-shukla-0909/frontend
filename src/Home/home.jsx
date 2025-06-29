@@ -4,6 +4,7 @@ import Left from "./Left/Left";
 import Middle from "./Middle/Middle";
 import Right from "./Right/Right";
 import socket from "../socket/socket";
+import CallScreen from "../features/call/callScreen";
 
 const Home = () => {
   const { user } = useSelector((state) => state.auth);
@@ -34,46 +35,10 @@ const Home = () => {
       <Left />
       <Middle />
       <Right />
+      <CallScreen/>
     </div>
   );
 };
 
 export default Home;
 
-// import { useSelector } from "react-redux";
-// import Left from "./Left/Left";
-// import Middle from "./Middle/Middle";
-// import Right from "./Right/Right";
-// import { useEffect } from "react";
-// import socket from "../socket/socket";
-
-
-
-
-
-// const Home = () => {
-
-//     const { user } = useSelector((state) => state.auth);
-
-//     useEffect(() => {
-//     if (user?._id) {
-//       socket.emit("setup", user); // ✅ Join server with your user info
-//     }
-
-//     return () => {
-//       socket.disconnect();
-//     };
-//   }, [user]);
-
-//     return (
-//         <>
-//             <div className='flex h-screen'>
-//                 <Left/>
-//                 <Middle/>
-//                 <Right/>
-//             </div>
-//         </>
-//     )
-// }
-
-// export default Home;
