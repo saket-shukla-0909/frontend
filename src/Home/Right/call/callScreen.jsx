@@ -1,5 +1,5 @@
 import React from "react";
-import useCallManager from "../../../../hooks/useCallManagers";
+import useCallManager from "../../../hooks/useCallManagers";
 
 
 const CallScreen = () => {

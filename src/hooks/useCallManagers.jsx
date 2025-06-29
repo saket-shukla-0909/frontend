@@ -1,6 +1,6 @@
 import Peer from "simple-peer";
 import { useRef, useState, useEffect } from "react";
-import socket from "../src/socket/socket";
+import socket from "../socket/socket";
 import useMedia from "./useMedia";
 
 

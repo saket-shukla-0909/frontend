@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiPhoneCall, FiVideo } from "react-icons/fi";
 import useConversation from "../../StateManage/useConversation";
-import useCallManager from "../../../hooks/useCallManagers";
+import useCallManager from "../../hooks/useCallManagers";
 import socket from "../../socket/socket";
 
 
