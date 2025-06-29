@@ -15,6 +15,12 @@ function App() {
 
   const isAuthenticated = isLoggedIn || tokenValid;
 
+    useEffect(() => {
+    if (user?._id) {
+      socket.emit("add-user", user._id);
+    }
+  }, [user]);
+  
   return (
     // <Loading/>
     <BrowserRouter>
