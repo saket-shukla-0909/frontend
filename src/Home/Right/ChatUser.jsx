@@ -65,15 +65,15 @@ const ChatUser = () => {
       <div className="ml-auto flex items-center gap-6 pr-2">
         <button
           title="Audio Call"
-          className="p-2 rounded-full hover:bg-blue-100 transition"
+          className="p-2 rounded-full hover:bg-green-100 transition"
         >
-          <FiPhoneCall size={22} className="text-blue-600" />
+          <FiPhoneCall size={22} className="text-green-600" />
         </button>
         <button
           title="Video Call"
-          className="p-2 rounded-full hover:bg-blue-100 transition"
+          className="p-2 rounded-full hover:bg-green-100 transition"
         >
-          <FiVideo size={22} className="text-blue-600" />
+          <FiVideo size={22} className="text-green-600" />
         </button>
       </div>
     </div>
