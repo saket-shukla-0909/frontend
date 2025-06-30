@@ -4,11 +4,10 @@ import useConversation from "../../StateManage/useConversation";
 import useCallManager from "../../hooks/useCallManagers";
 import socket from "../../socket/socket";
 
-
 const ChatUser = () => {
   const { selectedConversation } = useConversation();
   const [isTyping, setIsTyping] = useState(false);
-  const { callUser } = useCallManager(); 
+  const { callUser } = useCallManager();
 
   useEffect(() => {
     if (!selectedConversation?._id) return;
@@ -37,6 +36,7 @@ const ChatUser = () => {
   if (!selectedConversation) return null;
 
   const isOnline = selectedConversation.status === 1;
+
   const profileImage = selectedConversation?.profile_picture?.includes("uploads")
     ? `${process.env.REACT_APP_BASE_URL}/${selectedConversation.profile_picture
         .replace(/\\/g, "/")
@@ -52,9 +52,11 @@ const ChatUser = () => {
         </div>
       </div>
 
-      {/* Selected User Info */}
+      {/* User Info */}
       <div>
-        <h1 className="text-lg font-semibold">{selectedConversation.full_name}</h1>
+        <h1 className="text-lg font-semibold">
+          {selectedConversation.full_name}
+        </h1>
         <span
           className={`text-sm ${
             isTyping ? "text-green-600" : isOnline ? "text-green-600" : "text-gray-500"
@@ -64,19 +66,21 @@ const ChatUser = () => {
         </span>
       </div>
 
-      {/* Call Icons */}
+      {/* Call Buttons */}
       <div className="ml-auto flex items-center gap-6 pr-2">
         <button
           title="Audio Call"
-          className="p-2 rounded-full hover:bg-green-100 transition"
-          onClick={() => callUser(selectedConversation._id)} 
+          className="p-2 rounded-full hover:bg-green-100 transition disabled:opacity-50"
+          onClick={() => callUser(selectedConversation._id, false)} // ✅ Audio
+          disabled={!isOnline}
         >
           <FiPhoneCall size={22} className="text-green-600" />
         </button>
         <button
-            title="Video Call"
-            className="p-2 rounded-full hover:bg-green-100 transition"
-            onClick={() => callUser(selectedConversation._id)} 
+          title="Video Call"
+          className="p-2 rounded-full hover:bg-green-100 transition disabled:opacity-50"
+          onClick={() => callUser(selectedConversation._id, true)} // ✅ Video
+          disabled={!isOnline}
         >
           <FiVideo size={22} className="text-green-600" />
         </button>
@@ -86,5 +90,3 @@ const ChatUser = () => {
 };
 
 export default ChatUser;
-
-

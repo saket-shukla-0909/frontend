@@ -3,6 +3,7 @@ import ChatUser from "./ChatUser";
 import Messages from "./Messages";
 import Type from "./Type";
 import useConversation from "../../StateManage/useConversation";
+import CallScreen from "../../features/call/callScreen";
 
 const Right = () => {
   const { selectedConversation } = useConversation();
@@ -23,7 +24,9 @@ const Right = () => {
         <Messages />
       </div>
       <Type />
-      <CallScreen/>
+      {(callAccepted || receivingCall) && isVideoCall && !callEnded && (
+          <CallScreen/>
+      )}
     </div>
   );
 };

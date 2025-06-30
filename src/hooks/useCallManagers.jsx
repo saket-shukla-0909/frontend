@@ -12,8 +12,9 @@ const useCallManager = () => {
   const [callEnded, setCallEnded] = useState(false);
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState(null);
-  const [callee, setCallee] = useState(null); // for tracking who we called
+  const [callee, setCallee] = useState(null);
   const [callerSignal, setCallerSignal] = useState(null);
+  const [isVideoCall, setIsVideoCall] = useState(false); // ✅ Added
 
   const ringtone = useRef(null);
 
@@ -23,23 +24,23 @@ const useCallManager = () => {
   }, []);
 
   // 📞 Initiating a call
-  const callUser = (userId) => {
+  const callUser = (userId, video = false) => {
     console.log("📞 Calling user:", userId);
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    setIsVideoCall(video); // ✅ Track if video or audio call
 
-    setCallee(userId); // Save callee for later in case we end the call
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+    setCallee(userId);
 
     peer.on("signal", (signalData) => {
-      console.log("📡 Emitting call-user signal...");
       socket.emit("call-user", {
         to: userId,
         signalData,
         from: socket.id,
+        isVideoCall: video, // Optional: inform receiver
       });
     });
 
     peer.on("stream", (remoteStream) => {
-      console.log("🎥 Received remote stream");
       if (userVideo.current) {
         userVideo.current.srcObject = remoteStream;
       }
@@ -50,14 +51,12 @@ const useCallManager = () => {
 
   // ✅ Answering an incoming call
   const answerCall = () => {
-    console.log("✅ Answering call from:", caller);
     setCallAccepted(true);
     ringtone.current?.pause();
 
     const peer = new Peer({ initiator: false, trickle: false, stream });
 
     peer.on("signal", (signal) => {
-      console.log("📡 Sending answer signal...");
       socket.emit("answer-call", {
         signal,
         to: caller,
@@ -65,7 +64,6 @@ const useCallManager = () => {
     });
 
     peer.on("stream", (remoteStream) => {
-      console.log("🎥 Receiving stream after answering");
       if (userVideo.current) {
         userVideo.current.srcObject = remoteStream;
       }
@@ -75,9 +73,8 @@ const useCallManager = () => {
     connectionRef.current = peer;
   };
 
-  // ❌ Leave or end the call
+  // ❌ Leave the call
   const leaveCall = () => {
-    console.log("❌ Call ended");
     setCallEnded(true);
     connectionRef.current?.destroy();
 
@@ -86,10 +83,12 @@ const useCallManager = () => {
       socket.emit("end-call", { to: otherUser });
     }
 
+    ringtone.current?.pause();
+    ringtone.current.currentTime = 0;
     resetCallState();
   };
 
-  // 🔄 Reset all call-related state
+  // 🔄 Reset call-related states
   const resetCallState = () => {
     setReceivingCall(false);
     setCaller(null);
@@ -97,27 +96,26 @@ const useCallManager = () => {
     setCallAccepted(false);
     setCallEnded(false);
     setCallee(null);
+    setIsVideoCall(false); // ✅ Reset video state
     if (userVideo.current) userVideo.current.srcObject = null;
   };
 
-  // 📥 Listen for call events
+  // 📥 Incoming call
   useEffect(() => {
-    socket.on("receive-call", ({ from, signal }) => {
-      console.log("📲 Incoming call from:", from);
+    socket.on("receive-call", ({ from, signal, isVideoCall: incomingIsVideo }) => {
       setReceivingCall(true);
       setCaller(from);
       setCallerSignal(signal);
+      setIsVideoCall(incomingIsVideo ?? true); // fallback to video by default
       ringtone.current?.play().catch(() => {});
     });
 
     socket.on("call-answered", ({ signal }) => {
-      console.log("✅ Call was answered. Connecting peer...");
       setCallAccepted(true);
       connectionRef.current?.signal(signal);
     });
 
     socket.on("call-ended", () => {
-      console.log("❌ Call ended by the other user");
       setCallEnded(true);
       connectionRef.current?.destroy();
       ringtone.current?.pause();
@@ -143,6 +141,7 @@ const useCallManager = () => {
     caller,
     callAccepted,
     callEnded,
+    isVideoCall, // ✅ Now exposed
   };
 };
 
