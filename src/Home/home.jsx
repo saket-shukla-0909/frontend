@@ -35,7 +35,6 @@ const Home = () => {
       <Left />
       <Middle />
       <Right />
-      <CallScreen/>
     </div>
   );
 };

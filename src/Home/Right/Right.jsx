@@ -23,6 +23,7 @@ const Right = () => {
         <Messages />
       </div>
       <Type />
+      <CallScreen/>
     </div>
   );
 };
