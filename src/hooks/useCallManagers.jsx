@@ -14,49 +14,70 @@ const useCallManager = () => {
   const [caller, setCaller] = useState(null);
   const [callee, setCallee] = useState(null);
   const [callerSignal, setCallerSignal] = useState(null);
-  const [isVideoCall, setIsVideoCall] = useState(false); // ✅ Added
+  const [isVideoCall, setIsVideoCall] = useState(false);
 
   const ringtone = useRef(null);
 
   useEffect(() => {
+    console.log("🎵 Initializing ringtone...");
     ringtone.current = new Audio("/sounds/ringtone.mp3");
     ringtone.current.loop = true;
   }, []);
 
-  // 📞 Initiating a call
   const callUser = (userId, video = false) => {
-    console.log("📞 Calling user:", userId);
-    setIsVideoCall(video); // ✅ Track if video or audio call
+    console.log("📞 Initiating call to:", userId, "Video call:", video);
 
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    if (!stream) {
+      console.error("❌ No media stream available to initiate call.");
+      return;
+    }
+
+    setIsVideoCall(video);
     setCallee(userId);
 
+    const peer = new Peer({ initiator: true, trickle: false, stream });
+
     peer.on("signal", (signalData) => {
+      console.log("📤 Emitting signal to user:", userId, signalData);
       socket.emit("call-user", {
         to: userId,
         signalData,
         from: socket.id,
-        isVideoCall: video, // Optional: inform receiver
+        isVideoCall: video,
       });
     });
 
     peer.on("stream", (remoteStream) => {
+      console.log("📥 Received remote stream from callee.");
       if (userVideo.current) {
         userVideo.current.srcObject = remoteStream;
+        console.log("✅ Set remote stream to userVideo");
       }
     });
 
+    peer.on("error", (err) => {
+      console.error("❌ Peer (caller) error:", err);
+    });
+
     connectionRef.current = peer;
+    console.log("🔌 Peer connection created (caller)");
   };
 
-  // ✅ Answering an incoming call
   const answerCall = () => {
+    console.log("✅ Answering call from:", caller);
+
+    if (!stream) {
+      console.error("❌ No media stream available to answer call.");
+      return;
+    }
+
     setCallAccepted(true);
     ringtone.current?.pause();
 
     const peer = new Peer({ initiator: false, trickle: false, stream });
 
     peer.on("signal", (signal) => {
+      console.log("📤 Emitting answer signal to:", caller);
       socket.emit("answer-call", {
         signal,
         to: caller,
@@ -64,66 +85,96 @@ const useCallManager = () => {
     });
 
     peer.on("stream", (remoteStream) => {
+      console.log("📥 Received remote stream from caller.");
       if (userVideo.current) {
         userVideo.current.srcObject = remoteStream;
+        console.log("✅ Set remote stream to userVideo");
       }
+    });
+
+    peer.on("error", (err) => {
+      console.error("❌ Peer (receiver) error:", err);
     });
 
     peer.signal(callerSignal);
     connectionRef.current = peer;
+    console.log("🔌 Peer connection created (receiver)");
   };
 
-  // ❌ Leave the call
   const leaveCall = () => {
+    console.log("📴 Leaving call...");
     setCallEnded(true);
-    connectionRef.current?.destroy();
+
+    if (connectionRef.current) {
+      connectionRef.current.destroy();
+      connectionRef.current = null;
+      console.log("🔌 Peer connection destroyed");
+    }
 
     const otherUser = caller || callee;
     if (otherUser) {
+      console.log("📤 Emitting end-call to:", otherUser);
       socket.emit("end-call", { to: otherUser });
     }
 
     ringtone.current?.pause();
     ringtone.current.currentTime = 0;
+
     resetCallState();
   };
 
-  // 🔄 Reset call-related states
   const resetCallState = () => {
+    console.log("♻️ Resetting call state...");
     setReceivingCall(false);
     setCaller(null);
     setCallerSignal(null);
     setCallAccepted(false);
     setCallEnded(false);
     setCallee(null);
-    setIsVideoCall(false); // ✅ Reset video state
-    if (userVideo.current) userVideo.current.srcObject = null;
+    setIsVideoCall(false);
+
+    if (userVideo.current) {
+      userVideo.current.srcObject = null;
+      console.log("❎ Cleared userVideo stream");
+    }
   };
 
-  // 📥 Incoming call
   useEffect(() => {
+    console.log("🧩 Setting up socket listeners for calls");
+
     socket.on("receive-call", ({ from, signal, isVideoCall: incomingIsVideo }) => {
+      console.log("📞 Incoming call from:", from, "Video call:", incomingIsVideo);
       setReceivingCall(true);
       setCaller(from);
       setCallerSignal(signal);
-      setIsVideoCall(incomingIsVideo ?? true); // fallback to video by default
-      ringtone.current?.play().catch(() => {});
+      setIsVideoCall(incomingIsVideo ?? true);
+
+      ringtone.current?.play().catch(() => {
+        console.warn("⚠️ Unable to play ringtone automatically (likely due to autoplay policy).");
+      });
     });
 
     socket.on("call-answered", ({ signal }) => {
+      console.log("📲 Receiver accepted call. Signal received.");
       setCallAccepted(true);
       connectionRef.current?.signal(signal);
     });
 
     socket.on("call-ended", () => {
+      console.log("📴 Call ended by remote user.");
       setCallEnded(true);
-      connectionRef.current?.destroy();
+      if (connectionRef.current) {
+        connectionRef.current.destroy();
+        connectionRef.current = null;
+        console.log("🔌 Peer connection destroyed (remote end)");
+      }
       ringtone.current?.pause();
       ringtone.current.currentTime = 0;
       resetCallState();
     });
 
     return () => {
+      console.log("🚫 Cleaning up socket listeners for call");
       socket.off("receive-call");
       socket.off("call-answered");
       socket.off("call-ended");
@@ -141,7 +192,7 @@ const useCallManager = () => {
     caller,
     callAccepted,
     callEnded,
-    isVideoCall, // ✅ Now exposed
+    isVideoCall,
   };
 };
 

@@ -9,6 +9,8 @@ import useCallManager from "../../hooks/useCallManagers";
 const Right = () => {
   const { selectedConversation } = useConversation();
   const { callAccepted, receivingCall, isVideoCall, callEnded } = useCallManager(); // ✅ Access variables
+  console.log("Render CallScreen", { callAccepted, receivingCall, isVideoCall, callEnded });
+
 
   // No conversation selected UI
   if (!selectedConversation?._id) {
