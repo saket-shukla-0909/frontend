@@ -18,6 +18,14 @@ const useCallManager = () => {
 
   const ringtone = useRef(null);
 
+  // 🔉 Assign stream to local video element
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+      console.log("✅ Set local stream to myVideo");
+    }
+  }, [stream]);
+
   useEffect(() => {
     console.log("🎵 Initializing ringtone...");
     ringtone.current = new Audio("/sounds/ringtone.mp3");
@@ -136,6 +144,11 @@ const useCallManager = () => {
     if (userVideo.current) {
       userVideo.current.srcObject = null;
       console.log("❎ Cleared userVideo stream");
+    }
+
+    if (myVideo.current) {
+      myVideo.current.srcObject = null;
+      console.log("❎ Cleared myVideo stream");
     }
   };
 
