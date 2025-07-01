@@ -30,9 +30,7 @@ const Right = () => {
       <Type />
 
       {/* 📞 Video Call Screen */}
-      {(callAccepted || receivingCall) && isVideoCall && !callEnded && (
-        <CallScreen />
-      )}
+      {(callAccepted || receivingCall) && !callEnded && <CallScreen />}
     </div>
   );
 };
